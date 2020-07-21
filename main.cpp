@@ -34,7 +34,7 @@ void mostrarErroDoMysql(MYSQL *mysql);
 /**
  * Contem a conexao com o banco de dados
  */
-MYSQL *connexao;
+MYSQL *conexao;
 bool conectado = false;
 
 //////////////////
@@ -50,7 +50,8 @@ const unsigned int SAIR = 4;
 /**
  * Funcao principal
  */
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 
 	// Exibe a mensagem de boas vindas
 	std::cout << "Boas vindas da agenda!" << std::endl;
@@ -59,18 +60,20 @@ int main(int argc, char **argv) {
 
 	exibeMenu();
 
-	// Guarda a opóóo escolhida
+	// Guarda a opcao escolhida
 	int opcao;
 
 	// Entra em um loop infinito perguntando
 	// o que o usuario deseja fazer
-	while (continuarExecutando) {
+	while (continuarExecutando)
+	{
 
 		// Pergunta a opcao do usuario
 		std::cin >> opcao;
 
 		// Executa a opcao escolhida
-		switch (opcao) {
+		switch (opcao)
+		{
 			case ADICIONAR_COMPROMISSO:
 				adicionarCompromisso();
 				break;
@@ -88,7 +91,8 @@ int main(int argc, char **argv) {
 		}
 
 		// Exibe o menu novamente
-		if (continuarExecutando) {
+		if (continuarExecutando)
+		{
 			exibeMenu();
 		}
 	}
@@ -98,9 +102,11 @@ int main(int argc, char **argv) {
 	return 0;
 }
 
-void editarCompromisso() {
+void editarCompromisso()
+{
 	// Verifica se a conexao foi realizada com sucesso
-	if (!conectar()) {
+	if (!conectar())
+	{
 		std::cout << "Falha ao conectar ao banco de dados!" << std::endl;
 		return;
 	}
@@ -127,8 +133,8 @@ void editarCompromisso() {
 	std::cout << "Informe o ano:";
 	std::cin >> ano;
 
-	// Limpa a memória de qualquer caractere restante
-	// Se isso nóo for feito getline nóo funciona
+	// Limpa a memoria de qualquer caractere restante
+	// Se isso nao for feito getline nao funciona
 	std::cin.ignore();
 
 	// Solicita a descricao do compromisso
@@ -139,20 +145,23 @@ void editarCompromisso() {
 	std::string sql = "update Compromisso set data='" + ano + "-" + mes + "-" + dia + "', descricao='" + descricao + "' where cod=" + std::to_string(codCompromisso);
 
 	// Executa a query
-	int statusDeExecucao = mysql_query(connexao, sql.data());
+	int statusDeExecucao = mysql_query(conexao, sql.data());
 
 	// Verifica se deu tudo certo
-	if (statusDeExecucao == 0) {
+	if (statusDeExecucao == 0)
+	{
 		// Deu certo!
 		std::cout << "Compromisso atualizado" << std::endl;
-	} else {
+	} else
+	{
 		// Algo deu errado!
-		mostrarErroDoMysql(connexao);
+		mostrarErroDoMysql(conexao);
 		std::cout << "Falha ao atualizar compromisso!" << std::endl;
 	}
 
 }
-void removerCompromisso() {
+void removerCompromisso()
+{
 	std::cout << "Escolha um código de compromisso para remover:" << std::endl;
 	verCompromissos();
 	std::cout << "Código:";
@@ -164,15 +173,17 @@ void removerCompromisso() {
 	std::string sql = "delete from Compromisso where cod=" + std::to_string(codCompromisso);
 
 	// Executa a query
-	int statusDeExecucao = mysql_query(connexao, sql.data());
+	int statusDeExecucao = mysql_query(conexao, sql.data());
 
 	// Verifica se deu tudo certo
-	if (statusDeExecucao == 0) {
+	if (statusDeExecucao == 0)
+	{
 		// Deu certo!
 		std::cout << "Compromisso apagado!" << std::endl;
-	} else {
+	} else
+	{
 		// Algo deu errado!
-		mostrarErroDoMysql(connexao);
+		mostrarErroDoMysql(conexao);
 		std::cout << "Falha ao apagar compromisso!" << std::endl;
 	}
 
@@ -181,7 +192,8 @@ void removerCompromisso() {
 /**
  * Exibe um menu para o usuório
  */
-void exibeMenu() {
+void exibeMenu()
+{
 	std::cout << "Escolha uma opção:" << std::endl;
 	std::cout << ADICIONAR_COMPROMISSO << " - Adicionar compromisso" << std::endl;
 	std::cout << REMOVER_COMPROMISSO << " - Remover compromisso" << std::endl;
@@ -194,7 +206,8 @@ void exibeMenu() {
  * Mostra os erros que podem ocorrer na conexóo
  * @param mysql
  */
-void mostrarErroDoMysql(MYSQL *mysql) {
+void mostrarErroDoMysql(MYSQL *mysql)
+{
 	printf("Erro: (%d) [%s] \"%s\"", mysql_errno(mysql), mysql_sqlstate(mysql), mysql_error(mysql));
 	mysql_close(mysql);
 	exit(-1);
@@ -204,13 +217,15 @@ void mostrarErroDoMysql(MYSQL *mysql) {
  * Conecta no banco de dados
  * @return - true: Conectou, false: Falha ao conectar
  */
-bool conectar() {
+bool conectar()
+{
 
 	if (conectado) return true;
 
-	connexao = mysql_init(NULL);
-	if (!mysql_real_connect(connexao, "127.0.0.1", "root", "1234", "Agenda", 3306, NULL, 0)) {
-		mostrarErroDoMysql(connexao);
+	conexao = mysql_init(NULL);
+	if (!mysql_real_connect(conexao, "127.0.0.1", "root", "1234", "Agenda", 3306, NULL, 0))
+	{
+		mostrarErroDoMysql(conexao);
 
 		conectado = false;
 		return false;
@@ -223,18 +238,21 @@ bool conectar() {
 /**
  * Desconecta do banco de dados
  */
-void desconectar() {
-	mysql_close(connexao);
+void desconectar()
+{
+	mysql_close(conexao);
 	conectado = false;
 }
 
 /**
  * Adiciona um compromisso
  */
-void adicionarCompromisso() {
+void adicionarCompromisso()
+{
 
 	// Verifica se a conexao foi realizada com sucesso
-	if (!conectar()) {
+	if (!conectar())
+	{
 		std::cout << "Falha ao conectar ao banco de dados!" << std::endl;
 		return;
 	}
@@ -266,24 +284,28 @@ void adicionarCompromisso() {
 	std::string sql = "insert into Compromisso (data, descricao)values('" + ano + "-" + mes + "-" + dia + "','" + descricao + "')";
 
 	// Executa a query
-	int statusDeExecucao = mysql_query(connexao, sql.data());
+	int statusDeExecucao = mysql_query(conexao, sql.data());
 
 	// Verifica se deu tudo certo
-	if (statusDeExecucao == 0) {
+	if (statusDeExecucao == 0)
+	{
 		// Deu certo!
 		std::cout << "Compromisso inserido" << std::endl;
-	} else {
+	} else
+	{
 		// Algo deu errado!
-		mostrarErroDoMysql(connexao);
+		mostrarErroDoMysql(conexao);
 		std::cout << "Falha ao inserir compromisso!" << std::endl;
 	}
 
 }
 
-void verCompromissos() {
+void verCompromissos()
+{
 
 	// Verifica se a conexóo foi realizada com sucesso
-	if (!conectar()) {
+	if (!conectar())
+	{
 		std::cout << "Falha ao conectar ao banco de dados!" << std::endl;
 		return;
 	}
@@ -295,21 +317,24 @@ void verCompromissos() {
 	MYSQL_RES *resultados;
 
 	// Executa a query
-	int statusDeExecucao = mysql_query(connexao, "SELECT cod, data, descricao FROM Compromisso");
+	int statusDeExecucao = mysql_query(conexao, "SELECT cod, data, descricao FROM Compromisso");
 
 	// Verifica se deu tudo certo
-	if (statusDeExecucao == 0) {
+	if (statusDeExecucao == 0)
+	{
 
 		// Deu certo! Recupera os registros retornados;
-		resultados = mysql_store_result(connexao);
+		resultados = mysql_store_result(conexao);
 
 		// Mostra os registros retornados
-		while ((registro = mysql_fetch_row(resultados))) {
+		while ((registro = mysql_fetch_row(resultados)))
+		{
 			std::cout << registro[0] << "\t" << registro[1] << "\t" << registro[2] << std::endl;
 		}
-	} else {
+	} else
+	{
 		// Algo deu errado!
-		mostrarErroDoMysql(connexao);
+		mostrarErroDoMysql(conexao);
 		std::cout << "Falha ao recuperar os registros!" << std::endl;
 	}
 }
